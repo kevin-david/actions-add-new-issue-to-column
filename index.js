@@ -24,6 +24,7 @@ async function run() {
         try {
             return await createNewCard(octokit, info.columnId, contentId, contentType);
         } catch (error) {
+            console.log(error.errors[0]);
             // In case the action was triggered by multiple events, skip if other actions already added it
             const info = await getColumnAndIssueInformation(columnName, projectUrl, myToken, contentId, contentType);
             if (info.cardId != null) {
