@@ -25,7 +25,15 @@ async function run() {
             return await createNewCard(octokit, info.columnId, contentId, contentType);
         } catch (error) {
             console.log(error.errors[0]);
+
+            // This is a hack, for unknown reason GitHub API returns 422/"Project already has the associated issue"
+            //  even when info.cardId == null. And the behavior only repro'ed in live Actions.
+            if (error.code == 422 && error.errors[0].message == "Project already has the associated issue") {
+                return `Card already exists. Column:${info.currentColumnName}, cardId:${info.cardId}.`
+            }
+
             // In case the action was triggered by multiple events, skip if other actions already added it
+            console.log("Trying to get the card one more time ...");
             const info = await getColumnAndIssueInformation(columnName, projectUrl, myToken, contentId, contentType);
             if (info.cardId != null) {
                 return `New card already added, possibly with other in-flight actions. Column:${info.currentColumnName}, cardId:${info.cardId}.`
