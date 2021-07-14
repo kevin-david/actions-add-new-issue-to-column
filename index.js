@@ -29,7 +29,7 @@ async function run() {
             // This is a hack, for unknown reason GitHub API returns 422/"Project already has the associated issue"
             //  even when info.cardId == null. And the behavior only repro'ed in live Actions.
             if (error.status == 422 && error.errors[0].message == "Project already has the associated issue") {
-                return `Card already exists. Column:${info.currentColumnName}, cardId:${info.cardId}.`
+                return `Create card API returns ${error.status}/${error.errors[0].message}. Card already exists.`
             }
 
             // In case the action was triggered by multiple events, skip if other actions already added it
